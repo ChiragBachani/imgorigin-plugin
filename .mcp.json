@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "imgorigin": {
+      "type": "http",
+      "url": "https://imgorigin.com/mcp"
+    }
+  }
+}

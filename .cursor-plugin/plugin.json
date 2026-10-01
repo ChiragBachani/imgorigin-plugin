@@ -1,0 +1,14 @@
+{
+  "name": "imgorigin",
+  "displayName": "ImgOrigin",
+  "version": "1.0.0",
+  "description": "Find where a photo already appears on the web. Built for agents that check listings (apartments, marketplace items) for reused photos.",
+  "author": {"name": "ImgOrigin", "email": "support@imgorigin.com"},
+  "homepage": "https://imgorigin.com",
+  "repository": "https://github.com/ChiragBachani/imgorigin-plugin",
+  "license": "MIT",
+  "keywords": ["reverse image search", "listings", "scam check", "photos", "mcp"],
+  "logo": "assets/imgorigin.svg",
+  "mcpServers": "./mcp.json",
+  "skills": "./skills"
+}
