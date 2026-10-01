@@ -2,7 +2,7 @@
   "name": "imgorigin",
   "displayName": "ImgOrigin",
   "version": "1.1.0",
-  "description": "StreetEasy/Zillow twin for a mystery listing photo, and foreign-exact reuse evidence on a shortlist. Evidence only — the connector does not decide scams.",
+  "description": "Twin on StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads when a post has no canonical rental listing URL, plus foreign-exact reuse evidence on a shortlist. Evidence only — the connector does not decide scams.",
   "author": {
     "name": "ImgOrigin",
     "email": "support@imgorigin.com"

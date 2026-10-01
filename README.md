@@ -4,7 +4,7 @@ Install plus skills and docs for the hosted ImgOrigin MCP at `https://imgorigin.
 
 The skill [`skills/listing-photo-check`](skills/listing-photo-check/SKILL.md) asks the user to connect ImgOrigin, then uses it, on two triggers only:
 
-1. **Mystery post.** A screenshot, Facebook post, or broker post with no listing URL. The agent uploads the photo (`upload_image`) and searches for the StreetEasy or Zillow twin (`search_image` with `include_similar=false`). `exact` means the listing has the same image bytes or the same photo URL. A Google Lens rank is not `exact`.
+1. **Mystery post.** A screenshot, Facebook Marketplace post, Craigslist post, or broker post with no StreetEasy, Zillow, or other canonical rental listing URL. An FB or Craigslist link still fires. The agent uploads the photo (`upload_image`) and searches for the twin on StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads (`search_image` with `include_similar=false`). `exact` means the listing has the same image bytes or the same photo URL. A Google Lens rank is not `exact`.
 2. **Shortlist or daily standouts.** Just before a scam-check of that batch. The agent calls `check_listing` (photo URLs and/or `image_ids`, at most 20 listings per call). `reuse_score` is the count of foreign exact hits after mirrors of that listing are removed. The tool does not return `is_scam`. The agent decides.
 
 It does not run on every listing.

@@ -12,12 +12,12 @@ Approved by Chirag Bachani + apartment agents (Apartment Search Coordinator, Pla
 No `is_scam`. No Jev inside MCP. Fee/no-fee claims are agent-side only.
 
 ## Jobs (why it exists)
-1. Mystery screenshot → find StreetEasy/Zillow twin
+1. Mystery screenshot, Facebook Marketplace, Craigslist, or broker post with no canonical rental listing URL (StreetEasy, Zillow, SpareRoom, Leasebreak, HotPads, or similar listing page) → find the twin on StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads. An FB or Craigslist link still counts. Canonical means a rental listing page, not a social or marketplace post URL.
 2. Shortlist scam/reuse check before bothering the human (evidence only)
-3. Sell story: broker/FB no-address → provenance twin (fee claim is **agent-side** after reading SE fee field — never an MCP field)
+3. Sell story: broker/FB/Craigslist with no canonical rental listing URL → provenance twin on StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads (fee claim is **agent-side** after an `exact` StreetEasy hit, reading the SE fee field — never an MCP field; Zillow, SpareRoom, Leasebreak, and HotPads are not fee sources)
 
 ## Connect triggers (agent asks user to install) — **P0 skill ships with v1**
-- Screenshot / FB / broker post with no listing URL
+- Screenshot / Facebook Marketplace / Craigslist / broker post with no StreetEasy, Zillow, or other canonical rental listing URL. An FB or Craigslist link still fires.
 - About to scam-check a shortlist or daily standouts batch
 Ship a skill that fires on those; don't rely on cold Marketplace browse.
 
@@ -44,9 +44,9 @@ Unit-number inference, crop/focus, building-vs-unit model, Jev inside MCP (optio
 
 ## Acceptance
 - Planted SE photo → `match_kind=exact` only if that listing carries the same bytes/URL (not Lens #1 / same-building lookalike)
-- FB screenshot without public URL works via upload → `image_id`
+- FB or Craigslist screenshot works via upload → `image_id`, including when the only link is the FB or Craigslist post (no canonical rental listing URL)
 - Batch 20 `check_listing` without browser
-- Broker/FB no-address → `exact` is the real twin, not same-building lookalike
+- Broker/FB/Craigslist with no canonical rental listing URL → `exact` is the real twin on StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads, not a same-building lookalike. Fee/no-fee is read only from an `exact` StreetEasy page.
 
 ## Billing
 Meter the **agent key**.

@@ -2,13 +2,15 @@
 name: listing-photo-check
 description: >
   Use ImgOrigin only on two housing-agent triggers, and ask the user to connect
-  it when those tools are missing. Trigger 1: the user drops a screenshot,
-  Facebook post, or broker post with no listing URL — upload_image, then
-  search_image for the StreetEasy or Zillow twin with include_similar false
-  (exact and near_duplicate only). Trigger 2: about to scam-check a shortlist
-  or daily standouts — check_listing on that batch and read reuse_score as
-  foreign-exact evidence only. Do not use on every listing. A Lens rank is
-  not exact. Never invent is_scam from tool output.
+  it when those tools are missing. Trigger 1: screenshot, Facebook Marketplace,
+  Craigslist, or broker post with no StreetEasy, Zillow, or other canonical
+  rental listing URL — an FB or Craigslist link still fires — upload_image,
+  then search_image for the StreetEasy, Zillow, SpareRoom, Leasebreak, or
+  HotPads twin with include_similar false (exact and near_duplicate only).
+  Trigger 2: about to scam-check a shortlist or daily standouts —
+  check_listing on that batch and read reuse_score as foreign-exact evidence
+  only. Do not use on every listing. A Lens rank is not exact. Never invent
+  is_scam from tool output.
 ---
 
 # ImgOrigin — two connect triggers
@@ -21,10 +23,10 @@ Pay bar and field definitions: `REQUIREMENTS.md` in this plugin.
 
 | Fire | Situation |
 | --- | --- |
-| 1. Mystery post | The user dropped a screenshot, a Facebook post, or a broker post, and the message has no listing URL you can open. |
+| 1. Mystery post | The user dropped a screenshot, a Facebook Marketplace post, a Craigslist post, or a broker post, and there is no StreetEasy, Zillow, or other canonical rental listing URL. A Facebook or Craigslist link still fires. |
 | 2. Shortlist / standouts | You are about to scam-check a shortlist or the daily standouts, before you bother the human with that batch. |
 
-Do not fire for an ordinary summary, a tour, a rent comparison, or a listing that already has a URL when you are not running that scam-check. One listing you happen to be reading is not trigger 2. A photo question that already includes the listing URL is not trigger 1.
+Canonical means a rental listing page — StreetEasy, Zillow, SpareRoom, Leasebreak, HotPads, and similar — not a Facebook, Craigslist, or other social/marketplace post URL. Do not fire trigger 1 when one of those listing URLs is already present. A Facebook or Craigslist link does not count as one. Do not fire for an ordinary summary, a tour, or a rent comparison. One listing you happen to be reading is not trigger 2.
 
 ## Connect, then use
 
@@ -32,18 +34,18 @@ Cursor UI uses the OAuth connect card. Headless clients that cannot show a card 
 
 Trigger 1 needs `upload_image` and `search_image`. Trigger 2 needs `check_listing`, and `upload_image` only when a photo is an attachment rather than an https URL. If a tool that this trigger needs is missing, ask the user to connect ImgOrigin and wait:
 
-> ImgOrigin isn't connected. I need it for this photo (StreetEasy/Zillow twin, or the shortlist photo check). In Cursor, approve the ImgOrigin connect card. On a headless client, finish device-code login (`POST /v1/device/code`) so the client stores an API key. I will not paste a key into chat.
+> ImgOrigin isn't connected. I need it for this photo (StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads twin, or the shortlist photo check). In Cursor, approve the ImgOrigin connect card. On a headless client, finish device-code login (`POST /v1/device/code`) so the client stores an API key. I will not paste a key into chat.
 
 If `search_image` cannot take `include_similar` and return `match_kind`, stop trigger 1. Do not send `image_base64`. Do not rank a Google Lens result and call #1 `exact`.
 
-## Trigger 1 — screenshot / FB / broker post, no listing URL
+## Trigger 1 — screenshot / FB / Craigslist / broker post, no canonical rental listing URL
 
-Goal: the StreetEasy or Zillow listing that hosts this same photo. Not a same-building lookalike.
+Goal: the StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads listing that hosts this same photo. Not a same-building lookalike. Facebook Marketplace, Craigslist, broker posts, and screenshots still fire when they include an FB, Craigslist, or other social/marketplace link. They do not fire when a StreetEasy, Zillow, or other canonical rental listing URL is already there.
 
 1. Connect if the tools are missing.
 2. For each photo in the post, call `upload_image` with one of: the chat attachment id, a box file path, or an https URL. Take the returned `image_id` (content-hash). Never put base64 in the tool arguments.
 3. Call `search_image` with that `image_id` and `include_similar=false`. You may pass `image_url` only when the photo is already a public https URL and you did not need an upload. Leave `include_similar` false. That call returns `exact` and `near_duplicate` only.
-4. Keep hits whose `domain` is StreetEasy or Zillow. Read `match_kind` off the tool. Do not assign it yourself.
+4. Keep hits whose `domain` is StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads. Read `match_kind` off the tool. Do not assign it yourself.
 
 | `match_kind` | What you may say |
 | --- | --- |
@@ -52,8 +54,8 @@ Goal: the StreetEasy or Zillow listing that hosts this same photo. Not a same-bu
 | anything else, or a Lens rank with no `match_kind` | Not a twin. Ignore it. `visually_similar` is out of this call. |
 
 5. Report each kept hit as: `{match_kind}` on `{domain}` — `{url}` (`{title}` and `{confidence}` when the tool sent them).
-6. No StreetEasy or Zillow `exact` or `near_duplicate`: say you did not find a twin. Do not fill the gap with a visually similar listing, a Lens #1, or a same-building lookalike.
-7. Fee / no-fee, including when the post itself says "no fee": that is not an MCP field. Open the `exact` StreetEasy listing and read StreetEasy's fee field. State fee or no-fee only from that page. A Zillow-only hit, a `near_duplicate`, or a post that claims no-fee is not a fee reading. If you have no `exact` StreetEasy page, say the fee is unverified.
+6. No `exact` or `near_duplicate` on StreetEasy, Zillow, SpareRoom, Leasebreak, or HotPads: say you did not find a twin. Do not fill the gap with a visually similar listing, a Lens #1, or a same-building lookalike.
+7. Fee / no-fee, including when the post itself says "no fee": that is not an MCP field, and it is StreetEasy-only. Open the `exact` StreetEasy listing and read StreetEasy's fee field. State fee or no-fee only from that page. A Zillow, SpareRoom, Leasebreak, or HotPads hit, a `near_duplicate`, or a post that claims no-fee is not a fee reading. If you have no `exact` StreetEasy page, say the fee is unverified.
 
 Trigger 1 stops at the twin (and the StreetEasy fee read). Do not also run `check_listing` unless trigger 2 applies.
 
